@@ -3,13 +3,13 @@
 import { PostDto } from "@/type/post";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { fetchApi } from "@/lib/client";
 
 export default function Home() {
     const [posts, setPosts] = useState<PostDto[]>([]);
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`)
-            .then(response => response.json())
+        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`)
             .then(data => {
                 console.log(data)
                 setPosts(data);

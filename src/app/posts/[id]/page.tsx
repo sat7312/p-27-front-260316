@@ -1,5 +1,6 @@
 "use client"
 
+import { fetchApi } from "@/lib/client";
 import { PostDto } from "@/type/post";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,12 +11,8 @@ export default function Home() {
     const { id } = useParams();
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-                setPost(data);
-            });
+        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts/${id}`)
+            .then(data => setPost(data));
     }, []);
 
     if (post === null) return (<div>로딩중..</div>)
