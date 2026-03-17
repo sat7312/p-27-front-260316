@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 
-// interface Post {
-//     id: number,
-//     title:string
-// }
+export interface Post {
+    id: number,
+    title: string,
+    content: string
+}
 
 export default function Home() {
-    const [posts, setPosts] = useState<{ id: number; title: string }[]>([]);
+    const [posts, setPosts] = useState<Post []>([]);
 
     useEffect(() => {
         fetch("http://localhost:8080/api/v1/posts")
