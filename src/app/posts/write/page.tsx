@@ -1,6 +1,10 @@
 "use client"
 
+import { useRouter } from "next/navigation";
+
 export default function Write() {
+
+    const router = useRouter();
 
     const onSubmitHandler = (e: any) => {
         e.preventDefault();
@@ -14,24 +18,55 @@ export default function Write() {
             return;
         }
 
+        if (title.value.length >= 10 || title.value.length < 2) {
+            alert("2글자 이상 10글자 미만으로 작성해주세요");
+        }
+
         if (content.value.length === 0) {
             alert("내용을 입력해주세요.");
             content.focus();
             return;
         }
+
+        //db에 저장
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "title": title.value,
+                "content": content.value
+            })
+        })
+            .then(response => response.json())
+            .then(rs => {
+                alert(rs.msg);
+
+                // 글 상세 페이지로 이동
+                router.push(`/posts/${rs.data.postDto.id}`)
+            });
     }
 
     return (
         <>
-            <div className="flex flex-col gap-4 items-center">
-                <h1>글 작성</h1>
+            <h1>글 작성</h1>
 
-                <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
-                    <input type="text" name="title" className="border-1 rounded p-2" placeholder="제목을 입력해주세요" />
-                    <textarea rows={10} name="content" className="border-1 rounded p-2" placeholder="내용을 입력해주세요"></textarea>
-                    <input type="submit" value="작성" className="border-1 rounded p-2" />
-                </form>
-            </div>
+            <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
+                <input
+                    type="text"
+                    name="title"
+                    className="border-1 rounded p-2"
+                    placeholder="제목을 입력해주세요"
+                />
+                <textarea
+                    rows={10}
+                    name="content"
+                    className="border-1 rounded p-2"
+                    placeholder="내용을 입력해주세요"
+                ></textarea>
+                <input type="submit" value="작성" className="border-1 rounded p-2" />
+            </form>
         </>
     )
 }
