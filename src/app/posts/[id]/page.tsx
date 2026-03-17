@@ -5,7 +5,7 @@ import { PostDto } from "@/type/post";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
     const { id } = useParams();

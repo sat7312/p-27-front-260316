@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 
-export default function Home() {
+export default function List() {
+
     const [posts, setPosts] = useState<PostDto[]>([]);
 
     useEffect(() => {
