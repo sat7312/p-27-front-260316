@@ -44,7 +44,7 @@ export default function Write() {
                 alert("글이 정상적으로 작성되었습니다.");
 
                 // 글 상세 페이지로 이동
-                router.push(`/posts/${rs.data.postDto.id}`)
+                router.replace(`/posts/${rs.data.postDto.id}`)
             });
     }
 
@@ -59,13 +59,17 @@ export default function Write() {
                     className="border-1 rounded p-2"
                     placeholder="제목을 입력해주세요"
                 />
+
                 <textarea
                     rows={10}
                     name="content"
                     className="border-1 rounded p-2"
                     placeholder="내용을 입력해주세요"
                 ></textarea>
-                <input type="submit" value="작성" className="border-1 rounded p-2" />
+
+                <button className="bg-blue-500 text-white p-2 rounded" type="submit">
+                    저장
+                </button>
             </form>
         </>
     )
