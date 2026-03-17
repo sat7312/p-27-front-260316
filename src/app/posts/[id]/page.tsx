@@ -18,18 +18,16 @@ export default function Home() {
             });
     }, []);
 
+    if (post === null) return (<div>로딩중..</div>)
     return (
         <>
-            {post === null
-                ? <div>로딩중..</div>
-                : <div className="flex flex-col gap-8 items-center">
-                    <h1>{id}번 글 상세페이지</h1>
-                    <div>
-                        <h1>{post.title}</h1>
-                        <div>{post.content}</div>
-                    </div>
+            <div className="flex flex-col gap-8 items-center">
+                <h1>{id}번 글 상세페이지</h1>
+                <div>
+                    <h1>{post?.title}</h1>
+                    <div>{post?.content}</div>
                 </div>
-            }
+            </div>
         </>
     )
 }
