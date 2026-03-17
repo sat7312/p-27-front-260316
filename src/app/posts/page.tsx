@@ -10,7 +10,7 @@ export default function List() {
     const [posts, setPosts] = useState<PostDto[]>([]);
 
     useEffect(() => {
-        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`)
+        fetchApi(`/api/v1/posts`)
             .then(data => {
                 console.log(data)
                 setPosts(data);
