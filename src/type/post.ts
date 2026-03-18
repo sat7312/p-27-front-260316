@@ -5,3 +5,10 @@ export interface PostDto {
     createDate: string,
     modifyDate: string
 }
+
+export type PostCommentDto = {
+    id: number;
+    content: string;
+    createDate: string;
+    modifyDate: string;
+};

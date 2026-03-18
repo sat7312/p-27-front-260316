@@ -1,7 +1,7 @@
 "use client"
 
 import { fetchApi } from "@/lib/client";
-import { PostDto } from "@/type/post";
+import { PostCommentDto, PostDto } from "@/type/post";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,12 +9,16 @@ import { useEffect, useState } from "react";
 export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
+    const [postComments, setPostComments] = useState<PostCommentDto[]>([]);
     const { id } = useParams();
     const router = useRouter();
 
     useEffect(() => {
         fetchApi(`/api/v1/posts/${id}`)
             .then(data => setPost(data));
+        
+            fetchApi(`/api/v1/posts/${id}/comments`)
+            .then(setPostComments);
     }, []);
 
     const onDeleteHandler = (id: number) => {
@@ -28,7 +32,7 @@ export default function Detail() {
     }
 
     if (post === null) return (<div>로딩중..</div>)
-    
+
     return (
         <>
             <div className="flex flex-col gap-8 items-center">
@@ -48,6 +52,18 @@ export default function Detail() {
                         className="border-1 rounded p-2 bg-red-500"
                     >삭제</button>
                 </div>
+
+                <h2 className="p-2">댓글 목록</h2>
+                {postComments.length === 0 && <div>댓글이 없습니다.</div>}
+                {postComments.length > 0 && (
+                    <ul>
+                        {postComments.map((postComment) => (
+                            <li key={postComment.id}>
+                                {postComment.id} : {postComment.content}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </div>
         </>
     )
