@@ -69,6 +69,34 @@ export default function Detail() {
         );
     };
 
+    const handleAddPostComment = (e: any) => {
+        const form = e.target;
+        const contentInput = form.content;
+        const contentValue = contentInput.value;
+    
+        if (contentValue.length === 0) {
+          alert("내용을 입력해주세요.");
+          contentInput.focus();
+          return;
+        }
+    
+        if (contentValue.length < 2) {
+          alert("내용은 2자 이상 입력해주세요.");
+          contentInput.focus();
+          return;
+        }
+    
+        fetchApi(`/api/v1/posts/${postId}/comments`, {
+          method: "POST",
+          body: JSON.stringify({ content: contentValue }),
+        }).then((data) => {
+          alert(data.msg);
+    
+          if (postComments === null) return;
+          setPostComments([...postComments, data.data.commentDto]);
+        });
+      };
+
     if (isError) return <div>문제 발생</div>
     if (post === null) return <div>로딩중..</div>
 
@@ -97,6 +125,22 @@ export default function Detail() {
                     deletePostComment={deletePostComment}
                     onModifySuccess={onModifySuccess}
                 />
+                <form
+                    className="flex gap-2 items-center"
+                    onSubmit={handleAddPostComment}
+                >
+                    <textarea
+                        rows={5}
+                        name="content"
+                        className="border-2 p-2 rounded"
+                        maxLength={100}
+                    />
+
+                    <button
+                        type="submit"
+                        className="border-2 p-2 rounded"
+                    >저장</button>
+                </form>
             </div>
         </>
     )
