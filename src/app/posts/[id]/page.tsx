@@ -10,12 +10,17 @@ export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
     const [postComments, setPostComments] = useState<PostCommentDto[] | null>(null);
+    const [isError, setIsError] = useState(false);
     const { id: postId } = useParams();
     const router = useRouter();
 
     useEffect(() => {
         fetchApi(`/api/v1/posts/${postId}`)
-            .then(data => setPost(data));
+            .then(setPost)
+            .catch((e) => {
+                console.log(e);
+                setIsError(true);
+            })
 
         fetchApi(`/api/v1/posts/${postId}/comments`)
             .then(setPostComments);
@@ -47,7 +52,8 @@ export default function Detail() {
             });
     }
 
-    if (post === null) return (<div>로딩중..</div>)
+    if (isError) return <div>문제 발생</div>
+    if (post === null) return <div>로딩중..</div>
 
     return (
         <>
