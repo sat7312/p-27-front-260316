@@ -10,19 +10,19 @@ export default function Detail() {
 
     const [post, setPost] = useState<PostDto | null>(null);
     const [postComments, setPostComments] = useState<PostCommentDto[] | null>(null);
-    const { id } = useParams();
+    const { id: postId } = useParams();
     const router = useRouter();
 
     useEffect(() => {
-        fetchApi(`/api/v1/posts/${id}`)
+        fetchApi(`/api/v1/posts/${postId}`)
             .then(data => setPost(data));
 
-        fetchApi(`/api/v1/posts/${id}/comments`)
+        fetchApi(`/api/v1/posts/${postId}/comments`)
             .then(setPostComments);
     }, []);
 
-    const onDeleteHandler = (id: number) => {
-        fetchApi(`/api/v1/posts/${id}`, {
+    const onDeleteHandler = (postId: number) => {
+        fetchApi(`/api/v1/posts/${postId}`, {
             method: "DELETE"
         })
             .then((rs) => {
@@ -31,12 +31,28 @@ export default function Detail() {
             })
     }
 
+    const deletePostComment = (commentId: number) => {
+        fetchApi(`/api/v1/posts/${postId}/comments/${commentId}`, {
+            method: "DELETE",
+        })
+            .then((data) => {
+                alert(data.msg);
+            
+                if (postComments === null) return;
+
+                // 리렌더링을 위한 댓글 배열 교체 필요
+                setPostComments(
+                    postComments.filter((postComment) => postComment.id !== commentId)
+                );
+            });
+    }
+
     if (post === null) return (<div>로딩중..</div>)
 
     return (
         <>
             <div className="flex flex-col gap-8 items-center">
-                <h1>{id}번 글 상세페이지</h1>
+                <h1>{postId}번 글 상세페이지</h1>
                 <div>
                     <h1>{post.title}</h1>
                     <div>{post.content}</div>
@@ -60,10 +76,20 @@ export default function Detail() {
                 )}
 
                 {postComments !== null && postComments.length > 0 && (
-                    <ul>
+                    <ul className="flex flex-col gap-2">
                         {postComments.map((postComment) => (
-                            <li key={postComment.id}>
-                                {postComment.id} : {postComment.content}
+                            <li key={postComment.id} className="flex gap-2 items-center">
+                                <span>{postComment.id} : </span>
+                                <span>{postComment.content}</span>
+                                <button className="border-2 p-2 rounded">수정</button>
+                                <button
+                                    className="border-2 p-2 rounded"
+                                    onClick={() => {
+                                        deletePostComment(postComment.id);
+                                    }}
+                                >
+                                    삭제
+                                </button>
                             </li>
                         ))}
                     </ul>
