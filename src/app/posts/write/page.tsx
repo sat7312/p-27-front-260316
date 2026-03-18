@@ -48,6 +48,7 @@ export default function Write() {
     return (
         <>
             <h1>글 작성</h1>
+            
             <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
                 <input
                     type="text"
@@ -55,12 +56,14 @@ export default function Write() {
                     className="border-1 rounded p-2"
                     placeholder="제목을 입력해주세요"
                 />
+
                 <textarea
                     rows={10}
                     name="content"
                     className="border-1 rounded p-2"
                     placeholder="내용을 입력해주세요"
                 ></textarea>
+
                 <button
                     className="bg-blue-500 text-white p-2 rounded"
                     type="submit"

@@ -42,7 +42,7 @@ export default function Detail() {
         })
             .then((data) => {
                 alert(data.msg);
-            
+
                 if (postComments === null) return;
 
                 // 리렌더링을 위한 댓글 배열 교체 필요
@@ -51,6 +51,23 @@ export default function Detail() {
                 );
             });
     }
+
+    const onModifySuccess = (id: number, contentValue: string) => {
+        if (postComments === null) return;
+
+        //     fetchApi(`/api/v1/${postId}/comments`)
+        //         .then(rs) => {
+        //              setPostComments(rs);
+        //         }
+
+        setPostComments(
+            postComments.map((postComment) =>
+                postComment.id === id
+                    ? { ...postComment, content: contentValue }
+                    : postComment
+            )
+        );
+    };
 
     if (isError) return <div>문제 발생</div>
     if (post === null) return <div>로딩중..</div>
@@ -74,33 +91,105 @@ export default function Detail() {
                         className="border-1 rounded p-2 bg-red-500"
                     >삭제</button>
                 </div>
-
-                <h2 className="p-2">댓글 목록</h2>
-                {postComments === null && <div>로딩중..</div>}
-                {postComments !== null && postComments.length === 0 && (
-                    <div>댓글이 없습니다.</div>
-                )}
-
-                {postComments !== null && postComments.length > 0 && (
-                    <ul className="flex flex-col gap-2">
-                        {postComments.map((postComment) => (
-                            <li key={postComment.id} className="flex gap-2 items-center">
-                                <span>{postComment.id} : </span>
-                                <span>{postComment.content}</span>
-                                <button className="border-2 p-2 rounded">수정</button>
-                                <button
-                                    className="border-2 p-2 rounded"
-                                    onClick={() => {
-                                        deletePostComment(postComment.id);
-                                    }}
-                                >
-                                    삭제
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                <PostCommentList
+                    postId={post.id}
+                    postComments={postComments}
+                    deletePostComment={deletePostComment}
+                    onModifySuccess={onModifySuccess}
+                />
             </div>
         </>
+    )
+}
+
+function PostCommentList({ postId, postComments, deletePostComment, onModifySuccess }: {
+    postId: number,
+    postComments: PostCommentDto[] | null,
+    deletePostComment: (commentId: number) => void
+    onModifySuccess: (commentId: number, content: string) => void
+}) {
+    return (
+        <>
+            <h2 className="p-2">댓글 목록</h2>
+
+            {postComments === null && <div>로딩중..</div>}
+            {postComments !== null && postComments.length === 0 && (
+                <div>댓글이 없습니다.</div>
+            )}
+
+            {postComments !== null && postComments.length > 0 && (
+                <ul className="flex flex-col gap-2">
+                    {postComments.map((postComment) => (
+                        <PostCommentListItem
+                            key={postComment.id}
+                            postId={postId}
+                            postComment={postComment}
+                            deletePostComment={deletePostComment}
+                            onModifySuccess={onModifySuccess}
+                        />
+                    ))}
+                </ul>
+            )}
+        </>
+    )
+}
+
+function PostCommentListItem({ postId, postComment, deletePostComment, onModifySuccess }: {
+    postId: number,
+    postComment: PostCommentDto,
+    deletePostComment: (commentId: number) => void
+    onModifySuccess: (commentId: number, content: string) => void
+}) {
+
+    const [modifyMode, setModifyMode] = useState(false);
+
+    const toggleModifyMode = () => {
+        setModifyMode(!modifyMode);
+    };
+
+    const handleModifySubmit = (e: any) => {
+        e.preventDefault();
+        const form = e.target;
+        const contentInput = form.content;
+        const contentValue = contentInput.value;
+
+        fetchApi(`/api/v1/posts/${postId}/comments/${postComment.id}`, {
+            method: "PUT",
+            body: JSON.stringify({ content: contentValue }),
+        }).then((data) => {
+            alert(data.msg);
+            toggleModifyMode();
+        });
+
+        onModifySuccess(postComment.id, contentValue);
+    };
+
+    return (
+        <li key={postComment.id} className="flex gap-2 items-center">
+            <span>{postComment.id} : </span>
+            {modifyMode && (
+                <form className="flex gap-2" onSubmit={handleModifySubmit}>
+                    <input
+                        type="text"
+                        name="content"
+                        defaultValue={postComment.content}
+                        className="border-2 p-2 rounded"
+                    />
+                    <button className="border-2 p-2 rounded" type="submit">
+                        저장
+                    </button>
+                </form>
+            )}
+            {!modifyMode && <span>{postComment.content}</span>}
+            <button className="border-2 p-2 rounded" onClick={toggleModifyMode}>
+                {modifyMode ? "수정취소" : "수정"}
+            </button>
+            <button
+                className="border-2 p-2 rounded"
+                onClick={() => {
+                    deletePostComment(postComment.id);
+                }}
+            >삭제</button>
+        </li>
     )
 }

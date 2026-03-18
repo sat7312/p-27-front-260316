@@ -59,6 +59,7 @@ export default function Edit() {
     return (
         <>
             <h1>글 수정</h1>
+            
             <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
                 <input
                     type="text"
@@ -67,6 +68,7 @@ export default function Edit() {
                     placeholder="제목을 입력해주세요"
                     defaultValue={post.title}
                 />
+
                 <textarea
                     rows={10}
                     name="content"
@@ -74,6 +76,7 @@ export default function Edit() {
                     placeholder="내용을 입력해주세요"
                     defaultValue={post.content}
                 ></textarea>
+
                 <button
                     className="bg-blue-500 text-white p-2 rounded"
                     type="submit"
