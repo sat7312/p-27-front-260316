@@ -32,9 +32,6 @@ export default function Write() {
         //db에 저장
         fetchApi(`/api/v1/posts`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify({
                 "title": title.value,
                 "content": content.value
